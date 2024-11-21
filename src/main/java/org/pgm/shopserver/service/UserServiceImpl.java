@@ -1,32 +1,43 @@
 package org.pgm.shopserver.service;
 
 import lombok.RequiredArgsConstructor;
-import org.pgm.shopserver.dto.UserDTO;
 import org.pgm.shopserver.model.Role;
+import org.pgm.shopserver.model.User;
+import org.pgm.shopserver.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional  //2개의 REPOSITORY를 참조할 때 자동으로 해줌
 public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;  //이거 두 개가 주입됨
+
     @Override
-    public UserDTO saveUser(UserDTO userDTO) {
-        return null;
+    public User saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
+        user.setCreateTime(LocalDateTime.now());
+        return userRepository.save(user); //저장한 user 전체를 받을 것임
     }
 
     @Override
-    public UserDTO findByUsername(String username) {
-        return null;
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
     public void changeRole(Role newRole, String username) {
-
+        userRepository.updateUserRole(username, newRole);
     }
 
     @Override
-    public List<UserDTO> findAllUsers() {
-        return List.of();
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 }

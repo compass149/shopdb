@@ -1,7 +1,6 @@
 package org.pgm.shopserver.model;
 
 import jakarta.persistence.*;
-import jdk.jshell.Snippet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
